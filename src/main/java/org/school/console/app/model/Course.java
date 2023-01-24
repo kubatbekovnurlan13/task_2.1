@@ -14,6 +14,11 @@ public class Course {
         this.course_description = course_description;
     }
 
+    public Course(String course_name, String course_description) {
+        this.course_name = course_name;
+        this.course_description = course_description;
+    }
+
     public int getCourse_id() {
         return course_id;
     }

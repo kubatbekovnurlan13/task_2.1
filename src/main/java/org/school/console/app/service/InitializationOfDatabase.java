@@ -7,11 +7,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class InitializationOfDb {
-    private final String URL = "jdbc:postgresql://localhost:5432/schooldb";
-    private final String USER = "postgres";
-    private final String PASSWORD = "newpostgres";
-    private final Path sqlScriptPath = Paths.get("src/main/resources/creationOfTables.sql");
+public class InitializationOfDatabase {
+    private final Path sqlSchemaPath = Paths.get("src/main/resources/sql/schema.sql");
+    private final Path sqlTableCreationPath = Paths.get("src/main/resources/sql/creationOfTables.sql");
 
 
     public void init() {
@@ -24,16 +22,16 @@ public class InitializationOfDb {
         if (checkIfTablesExists(tableNames)) {
             dropTables(tableNames);
         }
-        createTables();
+        createTables(sqlSchemaPath);
+        createTables(sqlTableCreationPath);
     }
 
     private void dropTables(ArrayList<String> tableNames) {
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             Statement statement = conn.createStatement()) {
 
-            Statement statement = conn.createStatement();
             for (String name : tableNames) {
                 String sql = "drop table " + name + ";";
-                System.out.println("sql  : " + sql);
                 statement.execute(sql);
             }
         } catch (SQLException e) {
@@ -46,7 +44,7 @@ public class InitializationOfDb {
     private boolean checkIfTablesExists(ArrayList<String> tableNames) {
         boolean tableExits = false;
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
             DatabaseMetaData databaseMetaData = conn.getMetaData();
 
             ResultSet resultSet = databaseMetaData.getTables(null, null, null, new String[]{"TABLE"});
@@ -67,11 +65,11 @@ public class InitializationOfDb {
         return tableExits;
     }
 
-    private void createTables() {
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+    private void createTables(Path path) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
             String delimiter = ";";
 
-            Scanner scanner = getScanner(delimiter);
+            Scanner scanner = getScanner(delimiter, path);
 
             Statement currentStatement = null;
             while (scanner.hasNext()) {
@@ -100,10 +98,10 @@ public class InitializationOfDb {
         }
     }
 
-    private Scanner getScanner(String delimiter) {
+    private Scanner getScanner(String delimiter, Path path) {
         Scanner scanner = null;
         try {
-            scanner = new Scanner(sqlScriptPath).useDelimiter(delimiter);
+            scanner = new Scanner(path).useDelimiter(delimiter);
         } catch (IOException e) {
             System.err.println(e.getMessage());
             e.printStackTrace();

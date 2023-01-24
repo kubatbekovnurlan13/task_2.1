@@ -1,10 +1,3 @@
--- creation of table of Group
-CREATE TABLE groups
-(
-    group_id   serial primary key,
-    group_name varchar(50) not null
-);
-
 insert into groups (group_name)
 VALUES ('group_1'),
        ('group_2'),
@@ -17,15 +10,6 @@ VALUES ('group_1'),
        ('group_9'),
        ('group_10');
 
-
--- creation of table of Courses
-CREATE TABLE courses
-(
-    course_id          serial primary key,
-    course_name        varchar(50)  not null,
-    course_description varchar(200) not null
-);
-
 insert into courses (course_name, course_description)
 VALUES ('course_1', 'course_description_1'),
        ('course_2', 'course_description_2'),
@@ -37,16 +21,6 @@ VALUES ('course_1', 'course_description_1'),
        ('course_8', 'course_description_8'),
        ('course_9', 'course_description_9'),
        ('course_10', 'course_description_10');
-
--- creation of table of Students
-CREATE TABLE students
-(
-    student_id serial primary key,
-    group_id   int,
-    first_name varchar(50) not null,
-    last_name  varchar(50) not null,
-    foreign key (group_id) references groups (group_id)
-);
 
 insert into students (first_name, last_name, group_id)
 VALUES ('first_1', 'last_1', 1),
@@ -161,17 +135,6 @@ VALUES ('first_101', 'last_101'),
        ('first_108', 'last_108'),
        ('first_109', 'last_109'),
        ('first_110', 'last_110');
-
-
--- creation of table of Students_courses
-CREATE TABLE students_courses
-(
-    student_id int not null,
-    course_id  int not null,
-    primary key (student_id, course_id),
-    foreign key (student_id) references students (student_id),
-    foreign key (course_id) references courses (course_id)
-);
 
 insert into students_courses (student_id, course_id)
 VALUES (1, 1),

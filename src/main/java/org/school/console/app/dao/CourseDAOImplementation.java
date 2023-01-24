@@ -2,22 +2,19 @@ package org.school.console.app.dao;
 
 import org.school.console.app.daoInterfaces.CourseDAO;
 import org.school.console.app.model.Course;
+import org.school.console.app.service.DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDAOImplementation implements CourseDAO {
-    private final String URL = "jdbc:postgresql://localhost:5432/schooldb";
-    private final String USER = "postgres";
-    private final String PASSWORD = "newpostgres";
 
     @Override
     public void save(Course course) {
         String SQL_SAVE = "insert into courses (course_name, course_description) VALUES (?,?);";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
-
-            PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE);
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setString(1, course.getCourse_name());
             preparedStatement.setString(2, course.getCourse_description());
@@ -32,23 +29,21 @@ public class CourseDAOImplementation implements CourseDAO {
 
     @Override
     public boolean update(Course course) {
-        boolean updated = false;
         String SQL_SAVE = "update courses set course_name=?, course_description=? where course_id=?;";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
-
-            PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE);
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setString(1, course.getCourse_name());
             preparedStatement.setString(2, course.getCourse_description());
             preparedStatement.setInt(3, course.getCourse_id());
 
-            updated = preparedStatement.executeUpdate() > 0;
+            return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return updated;
+        return false;
     }
 
     @Override
@@ -56,9 +51,9 @@ public class CourseDAOImplementation implements CourseDAO {
         Course course = new Course();
 
         String SQL_SAVE = "select * from courses where course_id=?;";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
-            PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE);
             preparedStatement.setInt(1, course_id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -82,9 +77,9 @@ public class CourseDAOImplementation implements CourseDAO {
         List<Course> courses = new ArrayList<>();
 
         String SQL_SAVE = "select * from courses;";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
-            PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -105,19 +100,18 @@ public class CourseDAOImplementation implements CourseDAO {
 
     @Override
     public boolean deleteById(int course_id) {
-        boolean deleted = false;
         String SQL_SAVE = "delete from courses where course_id=?;";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
-            PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE);
             preparedStatement.setInt(1, course_id);
 
-            deleted = preparedStatement.executeUpdate() > 0;
+            return preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return deleted;
+        return false;
     }
 }
