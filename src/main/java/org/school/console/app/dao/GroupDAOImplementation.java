@@ -4,6 +4,7 @@ import org.school.console.app.daoInterfaces.GroupDAO;
 import org.school.console.app.model.Group;
 import org.school.console.app.service.DatabaseConnection;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,12 @@ public class GroupDAOImplementation implements GroupDAO {
             preparedStatement.setString(1, group.getGroup_name());
 
             preparedStatement.execute();
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -36,10 +39,12 @@ public class GroupDAOImplementation implements GroupDAO {
             preparedStatement.setInt(2, group.getGroup_id());
 
             return preparedStatement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
         return false;
     }
@@ -59,15 +64,19 @@ public class GroupDAOImplementation implements GroupDAO {
                     group.setGroup_id(resultSet.getInt("group_id"));
                     group.setGroup_name(resultSet.getString("group_name"));
                 }
-            } catch (SQLException e) {
-                System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-            } catch (Exception e) {
+            }catch (SQLException | RuntimeException e) {
+                if (e instanceof SQLException sqlException) {
+                    System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        } catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
                 e.printStackTrace();
             }
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return group;
 
@@ -88,10 +97,12 @@ public class GroupDAOImplementation implements GroupDAO {
 
                 groups.add(new Group(id, name));
             }
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        }catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
         return groups;
     }
@@ -105,10 +116,12 @@ public class GroupDAOImplementation implements GroupDAO {
             preparedStatement.setInt(1, group_id);
 
             return preparedStatement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
         return false;
     }

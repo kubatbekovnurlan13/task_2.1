@@ -28,10 +28,12 @@ public class DatabaseInitialization {
                 String sql = "drop table " + name + ";";
                 statement.execute(sql);
             }
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        }catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -50,10 +52,12 @@ public class DatabaseInitialization {
                 }
             }
 
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
 
         return tableExits;
@@ -85,10 +89,12 @@ public class DatabaseInitialization {
                 }
             }
             scanner.close();
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        }catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 

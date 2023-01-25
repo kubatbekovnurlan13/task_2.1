@@ -21,10 +21,12 @@ public class StudentDAOImplementation implements StudentDAO {
             preparedStatement.setInt(3, student.getGroup_id());
 
             preparedStatement.execute();
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -40,10 +42,12 @@ public class StudentDAOImplementation implements StudentDAO {
             preparedStatement.setInt(4, student.getStudent_id());
 
             return preparedStatement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        }catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
         return false;
     }
@@ -65,15 +69,19 @@ public class StudentDAOImplementation implements StudentDAO {
                     student.setLast_name(resultSet.getString("last_name"));
                     student.setGroup_id(resultSet.getInt("group_id"));
                 }
-            } catch (SQLException e) {
-                System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-            } catch (Exception e) {
+            } catch (SQLException | RuntimeException e) {
+                if (e instanceof SQLException sqlException) {
+                    System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        }catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
                 e.printStackTrace();
             }
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return student;
     }
@@ -95,10 +103,12 @@ public class StudentDAOImplementation implements StudentDAO {
 
                 students.add(new Student(id, name, lastName, groupId));
             }
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        }catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
         return students;
     }
@@ -112,10 +122,12 @@ public class StudentDAOImplementation implements StudentDAO {
             preparedStatement.setInt(1, student_id);
 
             return preparedStatement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException | RuntimeException e) {
+            if (e instanceof SQLException sqlException) {
+                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
         return false;
     }
