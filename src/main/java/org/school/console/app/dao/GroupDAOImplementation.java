@@ -13,7 +13,7 @@ public class GroupDAOImplementation implements GroupDAO {
     public void save(Group group) {
 
         String SQL_SAVE = "insert into groups (group_name) VALUES (?);";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setString(1, group.getGroup_name());
@@ -29,8 +29,8 @@ public class GroupDAOImplementation implements GroupDAO {
     @Override
     public boolean update(Group group) {
         String SQL_SAVE = "update groups set group_name=? where group_id=?;";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE);) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setString(1, group.getGroup_name());
             preparedStatement.setInt(2, group.getGroup_id());
@@ -49,16 +49,20 @@ public class GroupDAOImplementation implements GroupDAO {
         Group group = new Group();
 
         String SQL_SAVE = "select * from groups where group_id=?;";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setInt(1, group_id);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                group.setGroup_id(resultSet.getInt("group_id"));
-                group.setGroup_name(resultSet.getString("group_name"));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    group.setGroup_id(resultSet.getInt("group_id"));
+                    group.setGroup_name(resultSet.getString("group_name"));
+                }
+            } catch (SQLException e) {
+                System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
@@ -74,10 +78,9 @@ public class GroupDAOImplementation implements GroupDAO {
         List<Group> groups = new ArrayList<>();
 
         String SQL_SAVE = "select * from groups;";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
-
-            ResultSet resultSet = preparedStatement.executeQuery();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("group_id");
@@ -96,7 +99,7 @@ public class GroupDAOImplementation implements GroupDAO {
     @Override
     public boolean deleteById(int group_id) {
         String SQL_SAVE = "delete from groups where group_id=?;";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setInt(1, group_id);

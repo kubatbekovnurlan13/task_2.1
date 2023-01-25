@@ -23,7 +23,6 @@ public class DatabaseProperties {
             URL = prop.getProperty("URL");
             USER = prop.getProperty("USER");
             PASSWORD = prop.getProperty("PASSWORD");
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }

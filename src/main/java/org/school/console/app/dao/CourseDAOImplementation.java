@@ -13,7 +13,7 @@ public class CourseDAOImplementation implements CourseDAO {
     @Override
     public void save(Course course) {
         String SQL_SAVE = "insert into courses (course_name, course_description) VALUES (?,?);";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setString(1, course.getCourse_name());
@@ -30,7 +30,7 @@ public class CourseDAOImplementation implements CourseDAO {
     @Override
     public boolean update(Course course) {
         String SQL_SAVE = "update courses set course_name=?, course_description=? where course_id=?;";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setString(1, course.getCourse_name());
@@ -51,17 +51,21 @@ public class CourseDAOImplementation implements CourseDAO {
         Course course = new Course();
 
         String SQL_SAVE = "select * from courses where course_id=?;";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setInt(1, course_id);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                course.setCourse_id(resultSet.getInt("courses_id"));
-                course.setCourse_name(resultSet.getString("course_name"));
-                course.setCourse_description(resultSet.getString("course_description"));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    course.setCourse_id(resultSet.getInt("courses_id"));
+                    course.setCourse_name(resultSet.getString("course_name"));
+                    course.setCourse_description(resultSet.getString("course_description"));
+                }
+            }catch (SQLException e) {
+                System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
@@ -77,10 +81,9 @@ public class CourseDAOImplementation implements CourseDAO {
         List<Course> courses = new ArrayList<>();
 
         String SQL_SAVE = "select * from courses;";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
-
-            ResultSet resultSet = preparedStatement.executeQuery();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("course_id");
@@ -101,7 +104,7 @@ public class CourseDAOImplementation implements CourseDAO {
     @Override
     public boolean deleteById(int course_id) {
         String SQL_SAVE = "delete from courses where course_id=?;";
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(SQL_SAVE)) {
 
             preparedStatement.setInt(1, course_id);

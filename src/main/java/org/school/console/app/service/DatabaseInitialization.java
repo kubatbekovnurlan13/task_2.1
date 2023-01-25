@@ -2,22 +2,16 @@ package org.school.console.app.service;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class InitializationOfDatabase {
-    private final Path sqlSchemaPath = Paths.get("src/main/resources/sql/schema.sql");
-    private final Path sqlTableCreationPath = Paths.get("src/main/resources/sql/creationOfTables.sql");
-
+public class DatabaseInitialization {
+    private final Path sqlSchemaPath = DatabasePath.getSqlSchemaPath();
+    private final Path sqlTableCreationPath = DatabasePath.getSqlTableCreationPath();
 
     public void init() {
-        ArrayList<String> tableNames = new ArrayList<>();
-        tableNames.add("students_courses");
-        tableNames.add("students");
-        tableNames.add("courses");
-        tableNames.add("groups");
+        ArrayList<String> tableNames = DatabaseTablesProperties.getTables();
 
         if (checkIfTablesExists(tableNames)) {
             dropTables(tableNames);
@@ -27,7 +21,7 @@ public class InitializationOfDatabase {
     }
 
     private void dropTables(ArrayList<String> tableNames) {
-        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
 
             for (String name : tableNames) {
@@ -44,7 +38,7 @@ public class InitializationOfDatabase {
     private boolean checkIfTablesExists(ArrayList<String> tableNames) {
         boolean tableExits = false;
 
-        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
             DatabaseMetaData databaseMetaData = conn.getMetaData();
 
             ResultSet resultSet = databaseMetaData.getTables(null, null, null, new String[]{"TABLE"});
@@ -66,7 +60,7 @@ public class InitializationOfDatabase {
     }
 
     private void createTables(Path path) {
-        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
             String delimiter = ";";
 
             Scanner scanner = getScanner(delimiter, path);
@@ -99,12 +93,12 @@ public class InitializationOfDatabase {
     }
 
     private Scanner getScanner(String delimiter, Path path) {
-        Scanner scanner = null;
+        Scanner scanner;
         try {
             scanner = new Scanner(path).useDelimiter(delimiter);
         } catch (IOException e) {
             System.err.println(e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return scanner;
     }
