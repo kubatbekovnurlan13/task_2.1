@@ -1,4 +1,4 @@
-package org.school.console.app.service;
+package org.school.console.app.configuration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,9 +6,6 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
     private static Connection connection;
-
-    public DatabaseConnection() {
-    }
 
     public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {

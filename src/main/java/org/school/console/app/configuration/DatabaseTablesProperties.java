@@ -1,4 +1,4 @@
-package org.school.console.app.service;
+package org.school.console.app.configuration;
 
 import java.io.FileInputStream;
 import java.io.IOException;

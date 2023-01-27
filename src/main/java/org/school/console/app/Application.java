@@ -4,7 +4,7 @@ import org.school.console.app.dao.CourseDAOImplementation;
 import org.school.console.app.dao.StudentDAOImplementation;
 import org.school.console.app.model.Course;
 import org.school.console.app.model.Student;
-import org.school.console.app.service.DatabaseInitialization;
+import org.school.console.app.configuration.DatabaseInitialization;
 
 public class Application {
     public static void main(String[] args) {

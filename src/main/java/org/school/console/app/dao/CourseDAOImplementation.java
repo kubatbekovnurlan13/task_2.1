@@ -2,7 +2,7 @@ package org.school.console.app.dao;
 
 import org.school.console.app.daoInterfaces.CourseDAO;
 import org.school.console.app.model.Course;
-import org.school.console.app.service.DatabaseConnection;
+import org.school.console.app.configuration.DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,12 +20,8 @@ public class CourseDAOImplementation implements CourseDAO {
             preparedStatement.setString(2, course.getCourse_description());
 
             preparedStatement.execute();
-        } catch (SQLException | RuntimeException e) {
-            if (e instanceof SQLException sqlException) {
-                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
     }
 
@@ -40,12 +36,8 @@ public class CourseDAOImplementation implements CourseDAO {
             preparedStatement.setInt(3, course.getCourse_id());
 
             return preparedStatement.executeUpdate() > 0;
-        } catch (SQLException | RuntimeException e) {
-            if (e instanceof SQLException sqlException) {
-                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
         return false;
     }
@@ -66,19 +58,11 @@ public class CourseDAOImplementation implements CourseDAO {
                     course.setCourse_name(resultSet.getString("course_name"));
                     course.setCourse_description(resultSet.getString("course_description"));
                 }
-            }catch (SQLException | RuntimeException e) {
-                if (e instanceof SQLException sqlException) {
-                    System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
-                } else {
-                    e.printStackTrace();
-                }
+            } catch (SQLException e) {
+                System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
             }
-        } catch (SQLException | RuntimeException e) {
-            if (e instanceof SQLException sqlException) {
-                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
         return course;
 
@@ -100,12 +84,8 @@ public class CourseDAOImplementation implements CourseDAO {
 
                 courses.add(new Course(id, name, desc));
             }
-        } catch (SQLException | RuntimeException e) {
-            if (e instanceof SQLException sqlException) {
-                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
         return courses;
 
@@ -120,12 +100,8 @@ public class CourseDAOImplementation implements CourseDAO {
             preparedStatement.setInt(1, course_id);
 
             return preparedStatement.executeUpdate() > 0;
-        }catch (SQLException | RuntimeException e) {
-            if (e instanceof SQLException sqlException) {
-                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
         return false;
     }

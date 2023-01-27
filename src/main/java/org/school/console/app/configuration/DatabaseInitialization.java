@@ -1,4 +1,4 @@
-package org.school.console.app.service;
+package org.school.console.app.configuration;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,16 +24,16 @@ public class DatabaseInitialization {
         try (Connection conn = DatabaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
 
+            StringBuilder sql = new StringBuilder();
+
             for (String name : tableNames) {
-                String sql = "drop table " + name + ";";
-                statement.execute(sql);
+                sql.append("drop table ").append(name).append(";");
             }
-        }catch (SQLException | RuntimeException e) {
-            if (e instanceof SQLException sqlException) {
-                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+
+            statement.execute(sql.toString());
+
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
     }
 
@@ -52,12 +52,8 @@ public class DatabaseInitialization {
                 }
             }
 
-        } catch (SQLException | RuntimeException e) {
-            if (e instanceof SQLException sqlException) {
-                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
 
         return tableExits;
@@ -69,32 +65,19 @@ public class DatabaseInitialization {
 
             Scanner scanner = getScanner(delimiter, path);
 
-            Statement currentStatement = null;
+            Statement currentStatement;
             while (scanner.hasNext()) {
                 String rawStatement = scanner.next() + delimiter;
                 try {
                     currentStatement = conn.createStatement();
                     currentStatement.execute(rawStatement);
                 } catch (SQLException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (currentStatement != null) {
-                        try {
-                            currentStatement.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    currentStatement = null;
+                    System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
                 }
             }
             scanner.close();
-        }catch (SQLException | RuntimeException e) {
-            if (e instanceof SQLException sqlException) {
-                System.err.format("SQL State: %s\n%s", sqlException.getSQLState(), sqlException.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
     }
 

@@ -1,4 +1,4 @@
-package org.school.console.app.service;
+package org.school.console.app.configuration;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
