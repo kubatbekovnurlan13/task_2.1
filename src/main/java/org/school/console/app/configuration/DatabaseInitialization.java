@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class DatabaseInitialization {
     private final Path sqlSchemaPath = DatabasePath.getSqlSchemaPath();
-    private final Path sqlTableCreationPath = DatabasePath.getSqlTableCreationPath();
+    private final Path sqlTableCreationPath = DatabasePath.getSqlDataPath();
 
     public void init() {
         ArrayList<String> tableNames = DatabaseTablesProperties.getTables();
@@ -24,14 +24,10 @@ public class DatabaseInitialization {
         try (Connection conn = DatabaseConnection.getConnection();
              Statement statement = conn.createStatement()) {
 
-            StringBuilder sql = new StringBuilder();
-
             for (String name : tableNames) {
-                sql.append("drop table ").append(name).append(";");
+                statement.addBatch("drop table " + name + ";");
             }
-
-            statement.execute(sql.toString());
-
+            statement.executeBatch();
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         }
