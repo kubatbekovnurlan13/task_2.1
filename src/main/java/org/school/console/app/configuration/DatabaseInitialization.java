@@ -74,6 +74,7 @@ public class DatabaseInitialization {
             scanner.close();
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
